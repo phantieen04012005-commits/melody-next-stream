@@ -2,25 +2,25 @@
 
 import { useState, useRef, useEffect } from 'react';
 
-// 1. Tạo danh sách dữ liệu 5 bài hát giống y hình của bạn
+// Link ảnh đĩa nhạc Lofi cực đẹp trên mạng để không bao giờ bị mất hình nữa
+const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=500&q=80';
+
 const SONGS_DATA = [
-  { id: 1, title: 'Lofi Chill', artist: 'Relax & Chill Music', img: 'images/music.jpg', src: 'audio/lofi-chill.mp3' },
-  { id: 2, title: 'Night Vibes', artist: 'Night Driving Playlist', img: 'images/music.jpg', src: 'audio/night-vibes.mp3' },
-  { id: 3, title: 'Relax Beat', artist: 'Peaceful Background Music', img: 'images/music.jpg', src: 'audio/relax-beat.mp3' },
-  { id: 4, title: 'Deep Focus', artist: 'Study & Coding Music', img: 'images/music.jpg', src: 'audio/deep-focus.mp3' },
-  { id: 5, title: 'Summer Chill', artist: 'Weekend Relax Music', img: 'images/music.jpg', src: 'audio/summer-chill.mp3' },
+  { id: 1, title: 'Lofi Chill', artist: 'Relax & Chill Music', img: DEFAULT_IMAGE, src: 'audio/lofi-chill.mp3' },
+  { id: 2, title: 'Night Vibes', artist: 'Night Driving Playlist', img: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=500&q=80', src: 'audio/night-vibes.mp3' },
+  { id: 3, title: 'Relax Beat', artist: 'Peaceful Background Music', img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&q=80', src: 'audio/relax-beat.mp3' },
+  { id: 4, title: 'Deep Focus', artist: 'Study & Coding Music', img: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=500&q=80', src: 'audio/deep-focus.mp3' },
+  { id: 5, title: 'Summer Chill', artist: 'Weekend Relax Music', img: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80', src: 'audio/summer-chill.mp3' },
 ];
 
 export default function Home() {
-  // Các trạng thái điều khiển ứng dụng
-  const [songs, setSongs] = useState(SONGS_DATA);
+  const [songs] = useState(SONGS_DATA);
   const [currentSong, setCurrentSong] = useState(SONGS_DATA[0]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Xử lý khi bấm nút Play/Pause trên thanh nhạc mặc định để xoay đĩa
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -37,99 +37,91 @@ export default function Home() {
     };
   }, [currentSong]);
 
-  // Hàm khi người dùng click chọn bài hát ở dưới danh sách
   const handleSelectSong = (song: typeof SONGS_DATA[0]) => {
     setCurrentSong(song);
-    setIsPlaying(false); // Reset trạng thái xoay đĩa, khi người dùng bấm play thanh mới sẽ xoay
+    setIsPlaying(false);
   };
 
-  // Lọc bài hát theo ô tìm kiếm
   const filteredSongs = songs.filter(song =>
     song.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     song.artist.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
-    <div className="container">
-      {/* Đĩa nhạc lớn phía trên: Thêm class "rotate" chỉ khi đang phát nhạc */}
-      <div className="music-container">
-        <div className="img-container">
+    <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: '#000', color: '#fff', fontFamily: 'sans-serif', padding: '20px' }}>
+      
+      {/* Khung đĩa nhạc tròn xịn sò */}
+      <div className="music-container" style={{ marginBottom: '20px' }}>
+        <div className="img-container" style={{ width: '200px', height: '200px', borderRadius: '50%', overflow: 'hidden', border: '8px solid #222', boxShadow: '0 0 20px rgba(255,255,255,0.1)', position: 'relative' }}>
           <img 
             src={currentSong.img} 
             alt={currentSong.title} 
-            className={isPlaying ? "rotate" : ""} 
-            style={{ animationPlayState: isPlaying ? 'running' : 'paused' }}
+            style={{ 
+              width: '100%', 
+              height: '100%', 
+              objectFit: 'cover',
+              borderRadius: '50%',
+              // Hiệu ứng xoay tròn bằng CSS trực tiếp cực mượt
+              animation: 'spin 12s linear infinite',
+              animationPlayState: isPlaying ? 'running' : 'paused'
+            }} 
           />
+          {/* Tâm tròn nhỏ giữa đĩa nhạc */}
+          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '40px', height: '40px', backgroundColor: '#000', borderRadius: '50%', border: '4px solid #ff4757' }}></div>
         </div>
       </div>
 
-      {/* Tên bài hát đang phát */}
-      <div style={{ textRendering: 'optimizeLegibility', marginBottom: '15px' }}>
-        <h2 style={{ fontSize: '2rem', margin: '0 0 5px 0' }}>{currentSong.title}</h2>
+      {/* CSS đính kèm để làm đĩa xoay tròn */}
+      <style jsx global>{`
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+
+      {/* Thông tin bài hát */}
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        <h2 style={{ fontSize: '1.8rem', margin: '0 0 5px 0' }}>{currentSong.title}</h2>
         <p style={{ color: '#aaa', margin: 0 }}>{currentSong.artist}</p>
       </div>
 
-      {/* Thanh Player phát nhạc phát được âm thanh thật */}
-      <div style={{ marginBottom: '25px' }}>
-        <audio 
-          ref={audioRef}
-          src={currentSong.src} 
-          controls 
-          autoPlay={isPlaying}
-          style={{ width: '100%', maxWidth: '400px' }}
-        />
+      {/* Thanh Player điều khiển */}
+      <div style={{ marginBottom: '30px', width: '100%', maxWidth: '400px' }}>
+        <audio ref={audioRef} src={currentSong.src} controls autoPlay={isPlaying} style={{ width: '100%' }} />
       </div>
 
-      {/* Ô tìm kiếm bài hát chạy được thật */}
-      <div style={{ marginBottom: '35px' }}>
+      {/* Ô tìm kiếm bài hát */}
+      <div style={{ marginBottom: '30px', width: '100%', maxWidth: '300px' }}>
         <input 
           type="text" 
-          placeholder="Tìm kiếm bài hát..." 
+          placeholder=" Tìm kiếm bài hát..." 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-input" // Bạn có thể giữ class cũ của bạn
-          style={{
-            padding: '10px 20px',
-            borderRadius: '20px',
-            border: 'none',
-            width: '100%',
-            maxWidth: '300px',
-            textAlign: 'center',
-            outline: 'none'
-          }}
+          style={{ width: '100%', padding: '10px 15px', borderRadius: '20px', border: '1px solid #333', backgroundColor: '#111', color: '#fff', textAlign: 'center', outline: 'none' }}
         />
       </div>
 
-      <h2 style={{ fontSize: '1.5rem', marginBottom: '20px' }}>Popular Songs</h2>
+      <h3 style={{ fontSize: '1.3rem', marginBottom: '15px', alignSelf: 'center' }}>Popular Songs</h3>
 
-      {/* Danh sách bài hát bên dưới */}
-      <div className="songs-grid" style={{ 
-        display: 'flex', 
-        flexWrap: 'wrap', 
-        gap: '20px', 
-        justifyContent: 'center',
-        maxWidth: '1000px',
-        margin: '0 auto'
-      }}>
+      {/* Danh sách bài hát */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', justifyContent: 'center', maxWidth: '800px' }}>
         {filteredSongs.map((song) => (
           <div 
             key={song.id} 
             onClick={() => handleSelectSong(song)}
             style={{
-              backgroundColor: currentSong.id === song.id ? '#222' : '#111', // Đổi màu nền nếu đang chọn
-              border: currentSong.id === song.id ? '1px solid #ff4757' : '1px solid transparent',
-              padding: '15px',
-              borderRadius: '12px',
+              backgroundColor: currentSong.id === song.id ? '#1e1e1e' : '#0a0a0a',
+              border: currentSong.id === song.id ? '1px solid #ff4757' : '1px solid #222',
+              padding: '12px',
+              borderRadius: '10px',
               cursor: 'pointer',
-              width: '160px',
-              transition: 'transform 0.2s, background-color 0.2s',
+              width: '140px',
+              textAlign: 'center'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            <img src={song.img} alt={song.title} style={{ width: '100%', borderRadius: '8px', marginBottom: '10px' }} />
-            <h4 style={{ margin: '0 0 5px 0', fontSize: '1rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.title}</h4>
-            <p style={{ margin: 0, fontSize: '0.8rem', color: '#aaa', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.artist}</p>
+            <img src={song.img} alt={song.title} style={{ width: '100%', height: '110px', objectFit: 'cover', borderRadius: '6px', marginBottom: '8px' }} />
+            <h4 style={{ margin: '0 0 4px 0', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.title}</h4>
+            <p style={{ margin: 0, fontSize: '0.75rem', color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.artist}</p>
           </div>
         ))}
       </div>
