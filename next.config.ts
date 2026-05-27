@@ -1,12 +1,11 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  output: 'export', // BẮT BUỘC: Xuất ra file tĩnh (thư mục out) theo đúng Bước 4 của sơ đồ đề bài
+  output: 'export', // Bắt buộc phải có dòng này để tạo ra thư mục 'out' ở Bước 4
   images: {
-    unoptimized: true, // Tắt tối ưu ảnh để tránh bị lỗi hiển thị trên GitHub Pages
+    unoptimized: true, // Giúp hiển thị ảnh mượt mà
   },
-  basePath: '/melody-stream', // Điền tên kho GitHub của bạn vào đây
-  assetPrefix: '/melody-stream',
+  basePath: '/melody-next-stream', // Tên kho code GitHub của bạn
 };
 
 export default nextConfig;
