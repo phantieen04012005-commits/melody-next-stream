@@ -34,14 +34,14 @@ export default function Home() {
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Theo dõi thời gian nhạc chạy để cập nhật thanh tiến trình tua nhạc
+  // Theo dõi thời gian và trạng thái âm thanh bài hát
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
 
     const updateTime = () => setCurrentTime(audio.currentTime);
     const updateDuration = () => setDuration(audio.duration || 0);
-    const handleEnded = () => handleNext(); // Hết bài tự động chuyển bài tiếp theo
+    const handleEnded = () => handleNext(); // Hết bài tự động chuyển tiếp
 
     audio.addEventListener('timeupdate', updateTime);
     audio.addEventListener('loadedmetadata', updateDuration);
@@ -54,7 +54,7 @@ export default function Home() {
     };
   }, [currentIndex]);
 
-  // Điều khiển Phát / Dừng
+  // Điều khiển Phát / Tạm dừng
   const togglePlay = () => {
     if (!audioRef.current) return;
     if (isPlaying) {
@@ -66,19 +66,19 @@ export default function Home() {
     }
   };
 
-  // Chuyển bài tiếp theo
+  // Chuyển sang bài tiếp theo
   const handleNext = () => {
     setCurrentIndex((prevIndex) => (prevIndex + 1) % songs.length);
     setIsPlaying(true);
   };
 
-  // Quay lại bài trước
+  // Quay lại bài phía trước
   const handlePrev = () => {
     setCurrentIndex((prevIndex) => (prevIndex - 1 + songs.length) % songs.length);
     setIsPlaying(true);
   };
 
-  // Chọn bài trực tiếp từ danh sách playlist
+  // Click chọn bài hát trực tiếp dưới Playlist
   const handleSelectSong = (songId: number) => {
     const index = songs.findIndex(s => s.id === songId);
     if (index !== -1) {
@@ -87,7 +87,7 @@ export default function Home() {
     }
   };
 
-  // Xử lý khi người dùng kéo thanh tua nhạc
+  // Tua nhạc theo thanh kéo
   const handleProgressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!audioRef.current) return;
     const newTime = parseFloat(e.target.value);
@@ -95,7 +95,6 @@ export default function Home() {
     setCurrentTime(newTime);
   };
 
-  // Định dạng thời gian hiển thị dạng mm:ss
   const formatTime = (time: number) => {
     const mins = Math.floor(time / 60);
     const secs = Math.floor(time % 60);
@@ -108,28 +107,70 @@ export default function Home() {
   );
 
   return (
-    <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: '#000', color: '#fff', fontFamily: 'sans-serif', padding: '20px 20px 120px 20px' }}>
+    <div className="container" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', backgroundColor: '#000', color: '#fff', fontFamily: 'sans-serif', padding: '40px 20px' }}>
       
-      {/* Ẩn thẻ audio gốc của trình duyệt đi, chỉ dùng bộ điều khiển tự chế xịn sò */}
+      {/* Thẻ âm thanh chạy ngầm */}
       <audio ref={audioRef} src={currentSong.src} autoPlay={isPlaying} />
 
-      {/* Khung đĩa nhạc hình tròn lớn */}
-      <div className="music-container" style={{ marginBottom: '20px' }}>
-        <div className="img-container" style={{ width: '220px', height: '220px', borderRadius: '50%', overflow: 'hidden', border: '8px solid #222', boxShadow: '0 0 30px rgba(255,75,92,0.15)', position: 'relative' }}>
-          <img 
-            src={currentSong.img} 
-            alt={currentSong.title} 
-            style={{ 
-              width: '100%', 
-              height: '100%', 
-              objectFit: 'cover',
-              borderRadius: '50%',
-              animation: 'spin 12s linear infinite',
-              animationPlayState: isPlaying ? 'running' : 'paused'
-            }} 
-          />
-          <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '45px', height: '45px', backgroundColor: '#000', borderRadius: '50%', border: '4px solid #ff4757' }}></div>
+      {/* ========================================================
+          CỤM ĐĨA NHẠC VÀ BỘ ĐIỀU KHIỂN GOM CHUNG (CENTER PLAYER)
+         ======================================================== */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', backgroundColor: '#0a0a0a', padding: '30px', borderRadius: '24px', border: '1px solid #1a1a1a', boxShadow: '0 10px 40px rgba(0,0,0,0.5)', width: '100%', maxWidth: '380px', marginBottom: '30px' }}>
+        
+        {/* Đĩa nhạc xoay tít mù */}
+        <div className="music-container" style={{ marginBottom: '25px' }}>
+          <div className="img-container" style={{ width: '200px', height: '200px', borderRadius: '50%', overflow: 'hidden', border: '8px solid #1c1c1c', boxShadow: '0 0 25px rgba(255,71,87,0.2)', position: 'relative' }}>
+            <img 
+              src={currentSong.img} 
+              alt={currentSong.title} 
+              style={{ 
+                width: '100%', 
+                height: '100%', 
+                objectFit: 'cover',
+                borderRadius: '50%',
+                animation: 'spin 12s linear infinite',
+                animationPlayState: isPlaying ? 'running' : 'paused'
+              }} 
+            />
+            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '40px', height: '40px', backgroundColor: '#000', borderRadius: '50%', border: '4px solid #ff4757' }}></div>
+          </div>
         </div>
+
+        {/* Tên bài hát & Nghệ sĩ */}
+        <div style={{ textAlign: 'center', marginBottom: '20px', width: '100%' }}>
+          <h2 style={{ fontSize: '1.5rem', margin: '0 0 6px 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentSong.title}</h2>
+          <p style={{ color: '#ff4757', margin: 0, fontWeight: 'bold', fontSize: '0.95rem' }}>{currentSong.artist}</p>
+        </div>
+
+        {/* Thanh tua nhạc (Progress Bar) */}
+        <div style={{ display: 'flex', alignItems: 'center', width: '100%', gap: '10px', marginBottom: '20px' }}>
+          <span style={{ fontSize: '0.75rem', color: '#666', minWidth: '35px' }}>{formatTime(currentTime)}</span>
+          <input 
+            type="range" 
+            min="0" 
+            max={duration || 100} 
+            value={currentTime} 
+            onChange={handleProgressChange} 
+            style={{ flex: 1, accentColor: '#ff4757', cursor: 'pointer', height: '4px' }}
+          />
+          <span style={{ fontSize: '0.75rem', color: '#666', minWidth: '35px' }}>{formatTime(duration)}</span>
+        </div>
+
+        {/* Bộ nút bấm điều khiển: lùi, chạy/dừng, tiến bài */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
+          <button onClick={handlePrev} style={{ backgroundColor: 'transparent', border: 'none', color: '#aaa', cursor: 'pointer', fontSize: '1.5rem', outline: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = '#aaa'}>
+            ⏮
+          </button>
+          
+          <button onClick={togglePlay} style={{ backgroundColor: '#ff4757', border: 'none', color: '#fff', width: '50px', height: '50px', borderRadius: '50%', cursor: 'pointer', fontSize: '1.3rem', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 12px rgba(255,71,87,0.3)', transition: 'transform 0.1s', outline: 'none' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
+            {isPlaying ? '⏸' : '▶'}
+          </button>
+          
+          <button onClick={handleNext} style={{ backgroundColor: 'transparent', border: 'none', color: '#aaa', cursor: 'pointer', fontSize: '1.5rem', outline: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#fff'} onMouseLeave={(e) => e.currentTarget.style.color = '#aaa'}>
+            ⏭
+          </button>
+        </div>
+
       </div>
 
       <style jsx global>{`
@@ -139,94 +180,43 @@ export default function Home() {
         }
       `}</style>
 
-      {/* Thông tin bài hát đang phát */}
-      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <h2 style={{ fontSize: '1.8rem', margin: '0 0 6px 0', letterSpacing: '0.5px' }}>{currentSong.title}</h2>
-        <p style={{ color: '#ff4757', margin: 0, fontWeight: 'bold', fontSize: '1rem' }}>{currentSong.artist}</p>
-      </div>
-
-      {/* Ô tìm kiếm bài hát thiết kế tối giản */}
-      <div style={{ marginBottom: '30px', width: '100%', maxWidth: '340px' }}>
+      {/* Ô tìm kiếm bài hát */}
+      <div style={{ marginBottom: '35px', width: '100%', maxWidth: '380px' }}>
         <input 
           type="text" 
-          placeholder="🔍 Tìm bài hát hoặc nghệ sĩ yêu thích..." 
+          placeholder="🔍 Tìm kiếm bài hát hoặc ca sĩ..." 
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          style={{ width: '100%', padding: '12px 20px', borderRadius: '25px', border: '1px solid #222', backgroundColor: '#111', color: '#fff', textAlign: 'center', outline: 'none', fontSize: '0.95rem' }}
+          style={{ width: '100%', padding: '12px 20px', borderRadius: '25px', border: '1px solid #222', backgroundColor: '#0a0a0a', color: '#fff', textAlign: 'center', outline: 'none', fontSize: '0.9rem' }}
         />
       </div>
 
-      <h3 style={{ fontSize: '1.2rem', marginBottom: '20px', alignSelf: 'center', color: '#aaa', borderBottom: '1px solid #222', paddingBottom: '5px', width: '100%', maxWidth: '500px', textAlign: 'center' }}>Melody Playlist</h3>
+      <h3 style={{ fontSize: '1.2rem', marginBottom: '20px', color: '#666', letterSpacing: '1px', textTransform: 'uppercase' }}>Popular Songs</h3>
 
-      {/* Danh sách bài hát (Lưới các đĩa nhạc nhỏ gọn) */}
+      {/* Danh sách bài hát (Playlist) */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '15px', justifyContent: 'center', maxWidth: '800px' }}>
         {filteredSongs.map((song) => (
           <div 
             key={song.id} 
             onClick={() => handleSelectSong(song.id)}
             style={{
-              backgroundColor: currentSong.id === song.id ? '#111' : '#050505',
-              border: currentSong.id === song.id ? '1px solid #ff4757' : '1px solid #151515',
+              backgroundColor: currentSong.id === song.id ? '#0a0a0a' : '#020202',
+              border: currentSong.id === song.id ? '1px solid #ff4757' : '1px solid #111',
               padding: '12px',
               borderRadius: '12px',
               cursor: 'pointer',
               width: '140px',
               textAlign: 'center',
-              transition: 'all 0.2s ease-in-out'
+              transition: 'all 0.2s ease'
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'scale(1.04)';
-              e.currentTarget.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = 'none';
-            }}
+            onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.04)'}
+            onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
             <img src={song.img} alt={song.title} style={{ width: '100%', height: '110px', objectFit: 'cover', borderRadius: '8px', marginBottom: '8px' }} />
             <h4 style={{ margin: '0 0 4px 0', fontSize: '0.85rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.title}</h4>
-            <p style={{ margin: 0, fontSize: '0.75rem', color: '#666', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.artist}</p>
+            <p style={{ margin: 0, fontSize: '0.75rem', color: '#555', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{song.artist}</p>
           </div>
         ))}
-      </div>
-
-      {/* ========================================================
-          Thanh điều khiển nhạc chính hiệu cố định ở đáy màn hình (FIXED BOTTOM BAR)
-         ======================================================== */}
-      <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: '#111', borderTop: '1px solid #222', padding: '15px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px', boxShadow: '0 -10px 30px rgba(0,0,0,0.5)', zIndex: 999 }}>
-        
-        {/* Thanh thời gian chạy & Tua nhạc */}
-        <div style={{ display: 'flex', alignItems: 'center', width: '100%', maxWidth: '600px', gap: '10px' }}>
-          <span style={{ fontSize: '0.75rem', color: '#aaa', minWidth: '35px' }}>{formatTime(currentTime)}</span>
-          <input 
-            type="range" 
-            min="0" 
-            max={duration || 100} 
-            value={currentTime} 
-            onChange={handleProgressChange} 
-            style={{ flex: 1, accentColor: '#ff4757', cursor: 'pointer', height: '4px' }}
-          />
-          <span style={{ fontSize: '0.75rem', color: '#aaa', minWidth: '35px' }}>{formatTime(duration)}</span>
-        </div>
-
-        {/* Cụm nút bấm điều khiển Premium */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
-          {/* Nút lùi bài */}
-          <button onClick={handlePrev} style={{ backgroundColor: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.4rem', outline: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#ff4757'} onMouseLeave={(e) => e.currentTarget.style.color = '#fff'}>
-            ⏮
-          </button>
-          
-          {/* Nút Play / Pause To Bự ở Giữa */}
-          <button onClick={togglePlay} style={{ backgroundColor: '#ff4757', border: 'none', color: '#fff', width: '45px', height: '45px', borderRadius: '50%', cursor: 'pointer', fontSize: '1.2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(255,71,87,0.3)', transition: 'transform 0.1s', outline: 'none' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.08)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}>
-            {isPlaying ? '⏸' : '▶'}
-          </button>
-          
-          {/* Nút tiến bài */}
-          <button onClick={handleNext} style={{ backgroundColor: 'transparent', border: 'none', color: '#fff', cursor: 'pointer', fontSize: '1.4rem', outline: 'none', transition: 'color 0.2s' }} onMouseEnter={(e) => e.currentTarget.style.color = '#ff4757'} onMouseLeave={(e) => e.currentTarget.style.color = '#fff'}>
-            ⏭
-          </button>
-        </div>
-
       </div>
 
     </div>
