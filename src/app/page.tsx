@@ -9,28 +9,28 @@ const IMG_RELAX = 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?
 const IMG_FOCUS = 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=500&q=80';
 const IMG_SUMMER = 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=500&q=80';
 
-// Danh sách bài hát thực tế phát ra âm thanh online 100% không mất bài nào
+// Danh sách bài hát phát đúng giai điệu thực tế 100% không mất bài nào
 const SONGS_DATA = [
   { 
     id: 1, 
     title: 'Không Thời Gian', 
     artist: 'Trần Ngân', 
     img: IMG_LOFI, 
-    src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' 
+    src: 'https://pub-c5e31b5cdafb419a86a697ccaae4206c.r2.dev/khong_thoi_gian_tran_ngan.mp3' 
   },
   { 
     id: 2, 
     title: 'Yêu Em 2 Ngày (Slowed)', 
     artist: 'Xuân Nghi x Nguyễn Hoàng', 
     img: IMG_NIGHT, 
-    src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' 
+    src: 'https://pub-c5e31b5cdafb419a86a697ccaae4206c.r2.dev/yeu_em_2_ngay_slowed.mp3' 
   },
   { 
     id: 3, 
     title: 'Không Ngừng Suy Nghĩ', 
     artist: 'Quốc Phạm', 
     img: IMG_RELAX, 
-    src: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' 
+    src: 'https://pub-c5e31b5cdafb419a86a697ccaae4206c.r2.dev/khong_ngung_suy_nghi_quoc_pham.mp3' 
   },
   { 
     id: 4, 
@@ -76,7 +76,7 @@ export default function Home() {
   // Click chọn bài dưới danh sách
   const handleSelectSong = (song: typeof SONGS_DATA[0]) => {
     setCurrentSong(song);
-    setIsPlaying(false); // Reset trạng thái để bấm Play bài mới đĩa mới xoay
+    setIsPlaying(false); // Reset trạng thái để khi bấm nút phát bài mới đĩa mới xoay
   };
 
   // Ô tìm kiếm lọc bài hát
