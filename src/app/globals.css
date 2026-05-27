@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    background:
+    linear-gradient(
+        to bottom,
+        #181818,
+        #121212
+    );
+    color:white;
+    font-family:Arial,sans-serif;
+    min-height:100vh;
+}
+
+/* Header */
+
+header{
+    text-align:center;
+    padding:40px 20px 20px;
+}
+
+header h1{
+    color:#1DB954;
+    font-size:32px;
+}
+
+.top-info{
+    margin-top:15px;
+    display:flex;
+    justify-content:center;
+    gap:20px;
+    flex-wrap:wrap;
+    color:#aaa;
+    font-size:14px;
+}
+
+/* Player */
+
+.main-player{
+    text-align:center;
+    margin-top:30px;
+}
+
+.main-player img{
+    width:260px;
+    height:260px;
+    border-radius:30px;
+    object-fit:cover;
+    box-shadow:0 0 30px rgba(0,0,0,0.5);
+}
+
+.main-player h2{
+    margin-top:20px;
+    font-size:30px;
+}
+
+.main-player p{
+    color:#aaa;
+    margin:10px 0 20px;
+}
+
+#audio-player{
+    width:500px;
+    max-width:90%;
+}
+
+/* Search */
+
+.search-box{
+    text-align:center;
+    margin-top:50px;
+}
+
+#search{
+    width:320px;
+    max-width:90%;
+    padding:14px;
+    border:none;
+    border-radius:30px;
+    outline:none;
+    font-size:16px;
+}
+
+/* Section */
+
+.section-title{
+    text-align:center;
+    margin-top:50px;
+}
+
+.section-title h2{
+    font-size:28px;
+}
+
+/* Music list */
+
+.music-list{
+    display:flex;
+    justify-content:center;
+    gap:25px;
+    flex-wrap:wrap;
+    padding:40px;
+}
+
+/* Card */
+
+.card{
+    width:220px;
+    background:#1e1e1e;
+    border-radius:20px;
+    overflow:hidden;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 0 20px rgba(0,0,0,0.4);
+}
+
+.card:hover{
+    transform:
+    translateY(-10px)
+    scale(1.03);
+}
+
+.card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.card h3{
+    text-align:center;
+    padding:15px 10px 5px;
+}
+
+.card p{
+    text-align:center;
+    color:#aaa;
+    padding:0 10px 20px;
+}
+/* Hiệu ứng xoay tròn */
+@keyframes rotateDisk {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Thao tác bo tròn ảnh bìa giống cái đĩa nhạc */
+#cover {
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+/* Khi có class .play-animation, đĩa sẽ xoay */
+.play-animation {
+    animation: rotateDisk 10s linear infinite;
+}
